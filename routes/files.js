@@ -371,7 +371,35 @@ exports.updateFile = function (req, res) {
 	req1.end();
 };
 
+
+//Deleting an Existing RAML File
+//Deletes from the database but not from the toolbar.. yet
+//code to update might be in index.html script
 exports.deleteFile = function (req, res) {
-  console.log("delete file!");
+    console.log('deleting file from: ' + userName);
+    var file = req.params.id;
+
+    console.log('file: ' + file);
+    //options for delete request
+    var reqOps = {
+        hostname: 'localhost',
+        port: '50070',
+        path: '/webhdfs/v1/users/' + userName + '/' + file + '?op=DELETE&user.name=root',
+        method: 'DELETE',
+    };
+
+    var deleteReq = http.request(reqOps, function (deleteRes) {
+
+        console.log("STATUS: " + deleteRes.statusCode);
+        console.log("HEADERS: " + JSON.stringify(deleteRes.headers));
+        deleteRes.on('data', function(chunk) {
+            console.log('BODY: ' + chunk);
+        });
+    });
+
+    deleteReq.on('error', function(e) {
+        console.log('Problem with delete request: ' + e.message);
+    });
+    deleteReq.end();
 };
 
