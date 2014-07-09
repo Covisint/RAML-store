@@ -1009,6 +1009,7 @@ div[role=raml-editor] .menubar .file-absolute-path {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/*
 div[role=raml-editor] .menubar .menu-item-mocking-service .beta {
   background-color: #859900;
   border-radius: 10px;
@@ -1082,3 +1083,4 @@ div[role=raml-editor] .menubar .menu-item-mocking-service .field input[type=chec
   left: -webkit-calc(100% - 2em - 3px);
   left: calc(100% - 2em - 3px);
 }
+    */

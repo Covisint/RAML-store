@@ -40,8 +40,8 @@ angular.module('ramlEditorApp')
 
       var url = "/files/";
 	   function errorFunction(data, status, headers, config) {
-           //if(status >= 401){
-           // window.location = "/login.html";
+          // if(status >= 401){
+          //  window.location = "/login.html";
           //}
       }
 
@@ -68,7 +68,7 @@ angular.module('ramlEditorApp')
       }
 
       /**
-       * List files found in a given path.
+       * List files found in a given path. FIND ALL
        */
       service.directory = function () {
         var deferred = $q.defer();
@@ -79,7 +79,8 @@ angular.module('ramlEditorApp')
           url: url,
           withCredentials: false
         }).success(function (data) {
-          var ramlFiles = [];
+            var ramlFiles = [];
+            
           //console.log("data is +++",data,"+++");
           if(data.status=="ok"){
             Object.keys(data.response).forEach(function (id) {
@@ -89,7 +90,7 @@ angular.module('ramlEditorApp')
               files[data.response[id].path] = id;
 			  console.log(files[data.response[id].path]);
               ramlFiles.push({path: data.response[id].path, content: decodeURI(data.response[id].content)});
-              //console.log("path is ",data.response[id].path);
+                //console.log("path is ",data.response[id].path);
             });
           }
           else{
@@ -146,7 +147,9 @@ angular.module('ramlEditorApp')
             deferred.resolve();
           })
           .error(deferred.reject.bind(deferred));
+          location.reload(true);
         }
+        //location.reload(true);
         return deferred.promise;
       };
 
@@ -173,7 +176,7 @@ angular.module('ramlEditorApp')
           deferred.resolve();
         })
             .error(deferred.reject.bind(deferred));
-
+        //location.reload(true);
         return deferred.promise;
       };
 
@@ -181,7 +184,6 @@ angular.module('ramlEditorApp')
        * Loads the content of a file.
        */
       service.load = function (path) {
-        //console.log("path:",path);
         var deferred = $q.defer();
         $http({
           method: 'GET',
@@ -192,8 +194,8 @@ angular.module('ramlEditorApp')
           deferred.resolve(decodeURI(data.content));
         })
             .error(deferred.reject.bind(deferred));
-        //.error(deferred.reject(fileNotFoundInStoreMessage(path)));
-
+          //.error(deferred.reject(fileNotFoundInStoreMessage(path)));
+        //location.reload(true);
         return deferred.promise;
       };
 
@@ -201,11 +203,15 @@ angular.module('ramlEditorApp')
        * Removes a file or directory.
        */
       service.remove = function (path) {
+          console.log('delete from this path: ' + path);
         var deferred = $q.defer();
 
+        //not entering this if statement
         if (!files[path]) {
-          deferred.reject('file at path "' + path + '" does not exist');
+            deferred.reject('file at path "' + path + '" does not exist');
+            console.log("if statement for not files[path]");
           return deferred.promise;
+          
         }
 
         $http({
@@ -218,12 +224,13 @@ angular.module('ramlEditorApp')
           deferred.resolve();
         })
             .error(deferred.reject.bind(deferred));
-
+        //reload page after deleting to update file navigation bar
+        location.reload(true);
         return deferred.promise;
       };
 
       /**
-       * Ranames a file or directory
+       * Renames a file or directory
        */
       service.rename = function (source, destination) {
 
@@ -236,7 +243,7 @@ angular.module('ramlEditorApp')
           // Error in any request
           return $q.reject(reason);
         }).then(function () {
-          // on supprime l'ancien fichier
+          // it deletes the old file
           return service.remove(source);
         }, function(reason) {
           console.log('Failed: ' + reason);
@@ -244,7 +251,6 @@ angular.module('ramlEditorApp')
 
         return promise;
       };
-
       return service;
     })
     .run(function (MyFileSystem, config, eventService) {
