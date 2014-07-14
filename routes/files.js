@@ -9,12 +9,6 @@ var userName;
 var filePath = '/webhdfs/v1/users/';
 var user_access_name = '&user.name=root';
 
-// Variables used for extracting datanode location
-var datanode;
-var datanode_host;
-var datanode_port;
-var datanode_op;
-
 /**********************************/
 /**   FINDING SINGLE RAML FILE  **/
 /********************************/
@@ -27,7 +21,7 @@ exports.findById = function (req, res) {
 	full_uri = host + port + filePath + userName + file + '?op=OPEN' + user_access_name;
 	console.log("Full URI: " + full_uri);
 
-    if (file === 'undefined') {
+    if (file === '/undefined') {
         console.log("File is undefined");
     }//end if
 
@@ -49,7 +43,8 @@ exports.findById = function (req, res) {
                     //console.log("response: " + JSON.stringify(response));
                     console.log("body: " + body);
                     //send so that index.html knows the delete was successful
-                    item = { "content": body, "path": file };
+                    item = { "content": body, "path": file, "name": file.substr(1, file.length)};
+					console.log("item: " + JSON.stringify(item));
                     res.send(item);
                    // res.send(body);
                 }//end if
@@ -64,9 +59,8 @@ exports.findById = function (req, res) {
 
 
 /**************************/
-/**  GETTING ALL FILES   **/
+/**    FIND ALL FILES    **/
 /**************************/
-
 exports.findAll = function (req, res) {
     console.log("GETTING ALL FILES");
 	var paths = [];
@@ -97,7 +91,6 @@ exports.findAll = function (req, res) {
             }//end headers
         }//end request options
         //end request
-    //callback function
     , function (error, response, body) {
         console.log("STATUS: " + response.statusCode);
         console.log("HEADERS: " + JSON.stringify(response.headers));
@@ -124,8 +117,37 @@ exports.findAll = function (req, res) {
             //Send the fileList object
             res.send(JSON.stringify({ status: "ok", response: fileList }));
         }//end if
-        else {
-            console.log("Error: " + response.statusCode);
+		// The directory has not been created yet - 404
+        else if (response.statusCode === 404){
+			console.log("Creating new directory!");
+			full_uri = host + port + filePath + userName + '?op=MKDIRS' + user_access_name;
+			console.log("Full uri: " + full_uri);
+			
+			request.put(
+				{
+					uri: full_uri, 
+					followAllRedirects: true, 
+					headers: {
+						'Connection': 'close'
+					}//end headers
+				}//end request options
+				, function (error, response, body) {
+					console.log("STATUS: " + response.statusCode);
+					console.log("HEADERS: " + JSON.stringify(response.headers));
+
+					if (response.statusCode === 200) {
+						console.log("Successfully created new directory!");
+						//Send the fileList object
+						res.send(JSON.stringify({ status: "ok", response: fileList }));
+					}//end if
+					else{
+						console.log("Error creating directory: " + response.statusCode);
+					}
+				}//end callback function
+			);//end request
+        }
+		else{
+            console.log("Error retrieving directory: " + response.statusCode);
         }//end else
     });//end callback function
 }//end getAllFiles function
@@ -142,10 +164,10 @@ exports.addFile = function (req, res) {
     bodyContent = req.body.content;
     console.log("body content: " + bodyContent);
 
-	full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name;
+	full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true';
 	console.log("Full uri: " + full_uri);
 
-    if (file === 'undefined') {
+    if (file === '/undefined') {
         console.log("file is undefined");
     }//end if
     
@@ -162,17 +184,15 @@ exports.addFile = function (req, res) {
             //)//end request.post
         //callback function
 			, function (error, response, body) {
-				if (response.statusCode >= 200) {
-					console.log("Document was created successfully!!!!");
+				if (response.statusCode == 201) {
+					//console.log("Document was created successfully!!!!");
 					console.log("response body: " + body);
 					item = { "content": bodyContent, "path": file};
 					res.send(item);
-
 				}//end if
 				else {
 					console.log("error: " + response.statusCode);
 					console.log("body: " + JSON.stringify(body));
-
 				}//end else
 			}//end callback function
 		);//end request
@@ -191,35 +211,41 @@ exports.updateFile = function (req, res) {
     var bodyContent = req.body.content;
     console.log("BODY: " + bodyContent);
 
-    full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true';
-	console.log("Full uri: " + full_uri);
+	if (file === '/undefined') {
+        console.log("file is undefined");
+    }//end if
 
-    request.put(
-        {
-            uri: full_uri,
-			followAllRedirects: true, 
-			body: bodyContent,
-			headers: {
-                'Connection': 'Close'
-            }
-        }//end request.post parameters
-      //callback function for the Request  
-		, function (error, response, body) {
-			console.log("STATUS: " + response.statusCode);
-			console.log("HEADERS: " + JSON.stringify(response.headers));
+	else {
+		full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true';
+		console.log("Full uri: " + full_uri);
 
-			if (response.statusCode == 201) {
-				console.log("Document was saved successfully!!!!");
-				console.log("response body: " + body);
-				//need to use main function req and res for this
-				res.send('{"status":"success","id":"' + file + '","message":"The file was successfully updated."}');   
-			}//end if
-			else {
-				console.log("error: " + response.statusCode);
-				console.log(body);
-			}//end else
-		}//end callback function
-    )//end request.put
+		request.put(
+			{
+				uri: full_uri,
+				followAllRedirects: true, 
+				body: bodyContent,
+				headers: {
+					'Connection': 'Close'
+				}
+			}//end request.post parameters
+		  //callback function for the Request  
+			, function (error, response, body) {
+				console.log("STATUS: " + response.statusCode);
+				console.log("HEADERS: " + JSON.stringify(response.headers));
+
+				if (response.statusCode == 201) {
+					console.log("Document was saved successfully!!!!");
+					console.log("response body: " + body);
+					//need to use main function req and res for this
+					res.send('{"status":"success","id":"' + file + '","message":"The file was successfully updated."}');   
+				}//end if
+				else {
+					console.log("error: " + response.statusCode);
+					console.log(body);
+				}//end else
+			}//end callback function
+		)//end request.put
+	}
 }//end update file method
 
 

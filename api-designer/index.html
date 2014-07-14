@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="styles/vendor.css"/>
 
   <link rel="stylesheet" href="styles/main.css"/>
+   
 </head>
 <body ng-app="ramlEditorApp" class="{{$root.theme}}">
 <div class="container">
@@ -147,9 +148,7 @@ angular.module('ramlEditorApp')
             deferred.resolve();
           })
           .error(deferred.reject.bind(deferred));
-          location.reload(true);
         }
-        //location.reload(true);
         return deferred.promise;
       };
 
@@ -184,6 +183,8 @@ angular.module('ramlEditorApp')
        * Loads the content of a file.
        */
       service.load = function (path) {
+
+		service.directory();
         var deferred = $q.defer();
         $http({
           method: 'GET',
@@ -225,7 +226,7 @@ angular.module('ramlEditorApp')
         })
             .error(deferred.reject.bind(deferred));
         //reload page after deleting to update file navigation bar
-        location.reload(true);
+        //location.reload(true);
         return deferred.promise;
       };
 
@@ -243,14 +244,21 @@ angular.module('ramlEditorApp')
           // Error in any request
           return $q.reject(reason);
         }).then(function () {
-          // it deletes the old file
+          // reinitialize finding all files
+		  service.directory();
+		  // it deletes the old file
           return service.remove(source);
+		  
+        }, function(reason) {
+          console.log('Failed: ' + reason);
+        }).then(function () {
         }, function(reason) {
           console.log('Failed: ' + reason);
         });
 
         return promise;
       };
+
       return service;
     })
     .run(function (MyFileSystem, config, eventService) {
@@ -262,11 +270,14 @@ angular.module('ramlEditorApp')
       // The expires flags means whether
       // it should be hidden after a period of time or the
       // user should dismiss it manually.
+
+      //save file event broadcast
       eventService.broadcast('event:notification',
-          {message: 'File saved.', expires: true});
-
+          { message: 'File saved.', expires: true });
+        //delete file event broadcast
+      //eventService.broadcast('event:notification',
+    //      { message: 'File deleted.', expires: true });
     });
-
 </script>
 
 </body>
