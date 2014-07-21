@@ -25,7 +25,6 @@ var user_access_name = '&user.name=root';
 /**********************************/
 /**   FINDING SINGLE RAML FILE  **/
 /********************************/
-//new find by id with single request using request module
 exports.findById = function (req, res) {
 	logger.log("info", "IN FUNCTION findById");
    	var file = "/" + req.params.id;
