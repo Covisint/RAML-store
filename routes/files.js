@@ -27,49 +27,6 @@ var request = require("request");
 // Username set automatically by extracting header from Nginx
 var userName;
 
-/**********************************/
-/**   FINDING SINGLE RAML FILE  **/
-/********************************/
-exports.findById = function (req, res) {
-	logger.log("info", "IN FUNCTION findById");
-   	var file = "/" + req.params.id;
-    	logger.log("info", "File: " + file);
-
-	full_uri = host + port + filePath + userName + file + '?op=OPEN' + user_access_name;
-	logger.log("info", "Full URI: " + full_uri);
-
-    	if (file === '/undefined') {
-        	logger.log("error", "File is undefined");
-    	}//end if
-
-    	else {
-    		request({
-	    			uri: full_uri, 
-				followAllRedirects: true, 
-				headers:{
-					'Connection': 'close',
-					'Content-type': 'application/json'
-				}//end headers
-            		}//end request options
-            		//callback function for request
-            		, function (error, response, body) {
-            			logger.log("info", "Response for findById request");
-                		logger.log("info", "STATUS: " + response.statusCode);
-                		logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
-                		if (response.statusCode == 200) {
-                			logger.log("info", "Document was opened successfully");
-                    			//send necessary information to index.html 
-                    			item = { "content": body, "path": file};
-                    			res.send(item);
-                		}//end if
-                		else {
-                			logger.log("error", "error in findById: " + response.statusCode);
-                		}//end else
-            		}//end function
-            	)//end request
-    	}//end else
-}//end findbyId function
-
 
 /**************************/
 /**    FIND ALL FILES    **/
@@ -168,6 +125,50 @@ exports.findAll = function (req, res) {
         }//end else
     })//end callback function
 }//end getAllFiles function
+
+
+/**********************************/
+/**   FINDING SINGLE RAML FILE  **/
+/********************************/
+exports.findById = function (req, res) {
+	logger.log("info", "IN FUNCTION findById");
+   	var file = "/" + req.params.id;
+    	logger.log("info", "File: " + file);
+
+	full_uri = host + port + filePath + userName + file + '?op=OPEN' + user_access_name;
+	logger.log("info", "Full URI: " + full_uri);
+
+    	if (file === '/undefined') {
+        	logger.log("error", "File is undefined");
+    	}//end if
+
+    	else {
+    		request({
+	    			uri: full_uri, 
+				followAllRedirects: true, 
+				headers:{
+					'Connection': 'close',
+					'Content-type': 'application/json'
+				}//end headers
+            		}//end request options
+            		//callback function for request
+            		, function (error, response, body) {
+            			logger.log("info", "Response for findById request");
+                		logger.log("info", "STATUS: " + response.statusCode);
+                		logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
+                		if (response.statusCode == 200) {
+                			logger.log("info", "Document was opened successfully");
+                    			//send necessary information to index.html 
+                    			item = { "content": body, "path": file};
+                    			res.send(item);
+                		}//end if
+                		else {
+                			logger.log("error", "error in findById: " + response.statusCode);
+                		}//end else
+            		}//end function
+            	)//end request
+    	}//end else
+}//end findbyId function
 
 
 /**************************/
