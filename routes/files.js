@@ -1,8 +1,17 @@
-// Logger module
-var winston = require('winston');
+/** HDFS SERVER CONFIGURATION **/
+var host = 'http://localhost';
+var port = ':50070';
+// This is the directory that will store the userNames and RAML files in HDFS (e.g. /webhdfs/v1/users/jake/myRaml.raml)
+var filePath = '/webhdfs/v1/users/';
+// Change this if any administrative privileges are needed (e.g. '&user.name=root')
+var user_access_name = '';
+/*******************************/
 
 // Filename for logs
 var log_file = "RAML_Store.log";
+
+// Logger module
+var winston = require('winston');
 
 // Instantiate logger
 var logger = new (winston.Logger)({
@@ -15,12 +24,8 @@ var logger = new (winston.Logger)({
 //adding request module to simplify http requests
 var request = require("request");
 
-// Global variables used in multiple functions
-var host = 'http://localhost';
-var port = ':50070';
+// Username set automatically by extracting header from Nginx
 var userName;
-var filePath = '/webhdfs/v1/users/';
-var user_access_name = '&user.name=root';
 
 /**********************************/
 /**   FINDING SINGLE RAML FILE  **/
