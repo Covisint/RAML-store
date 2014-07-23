@@ -41,7 +41,6 @@ app.configure('production', function(){
  * ------
  */
  
-//try to take out check auth
 app.get('/files', files.findAll);
 app.get('/files/:id', files.findById);
 app.post('/files', files.addFile);
