@@ -11,9 +11,9 @@ Installation steps
 =======
 You need to have access to a Hadoop server to use the application.
 
-To install the node modules, run npm install in the main directory (where package.json is).
+To install the node modules, run **npm install** in the main directory (where package.json is).
 
-To start the application, run node server.js in the same directory.
+To start the application, run **node server.js** in the same directory.
 
 Configurations
 =======
