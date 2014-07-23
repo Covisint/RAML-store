@@ -19,7 +19,7 @@ app.configure(function(){
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
   });
-  app.use(express.static(__dirname + '/api-designer'));
+  app.use(express.static(__dirname + '/dist'));
   app.use(express.errorHandler({
     dumpExceptions: true,
     showStack: true
