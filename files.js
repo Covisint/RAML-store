@@ -96,8 +96,7 @@ exports.findAll = function (req, res) {
 			full_uri = host + port + filePath + userName + '?op=MKDIRS' + user_access_name;
 			logger.log("info", "Full uri: " + full_uri);
 			
-			request.put(
-				{
+			request.put({
 					uri: full_uri, 
 					followAllRedirects: true, 
 					headers: {
