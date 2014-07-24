@@ -67703,7 +67703,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     /*"    <console-tab role=\"try-it\" heading=\"Try It\" active=\"documentation.tryItActive\" disabled=\"!ramlConsole.tryItEnabled()\">\n" +
     "      <try-it></try-it>\n" +
     "    </console-tab>\n" +
-    "  </console-tabset>\n" */+
+    "  </console-tabset>\n" +*/
     "</section>\n"
   );
 
