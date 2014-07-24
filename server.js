@@ -48,6 +48,8 @@ app.put('/files/:id', files.updateFile);
 app.delete('/files/:id', files.deleteFile);
 app.get('/', routes.index);
 
+app.get('/HDFS/:id', files.consoleHDFS);
+
 app.get('/logout', function (req, res) {
   delete req.session.user_id;
   res.statusCode = 401;
