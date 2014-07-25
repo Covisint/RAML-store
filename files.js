@@ -312,7 +312,7 @@ exports.deleteFile = function (req, res) {
 /**   RAML FILE FOR CONSOLE.HTML **/
 /**********************************/
 exports.consoleHDFS = function (req, res) {
-	logger.log("info", "headers: " + JSON.stringify(req.headers));
+	/*logger.log("info", "headers: " + JSON.stringify(req.headers));
 	var headers = req.header("authorization");
 	console.log("auth header: " + headers);
 	// Remove BASIC tag
@@ -322,7 +322,7 @@ exports.consoleHDFS = function (req, res) {
 	var decoded = buffer.toString();
     // Split and grab the Username
 	var index = decoded.indexOf(':');
-    userName = decoded.substring(0, index);
+    userName = decoded.substring(0, index);*/
 
 	logger.log("info", "IN FUNCTION consoleHDFS");
     var file = "/" + req.params.id;
