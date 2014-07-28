@@ -27,6 +27,10 @@ var request = require("request");
 // Username set automatically by extracting header from Nginx
 var userName;
 
+// Options for Hadoop block and replication size
+var blocksize ='&blocksize=5120';
+var replication ='&replication=3'
+
 
 /**************************/
 /**    FIND ALL FILES    **/
@@ -181,7 +185,7 @@ exports.addFile = function (req, res) {
 
     	bodyContent = req.body.content;
 
-	full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true';
+	full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true' + blocksize + replication;
 	logger.log("info", "Full uri: " + full_uri);
 
 	if (file === '/undefined') {
