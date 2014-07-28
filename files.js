@@ -1,8 +1,8 @@
 /** HDFS SERVER CONFIGURATION **/
 var host = 'http://localhost';
 var port = ':50070';
-// This is the directory that will store the userNames and RAML files in HDFS (e.g. /webhdfs/v1/users/jake/myRaml.raml)
-var filePath = '/webhdfs/v1/users/';
+// This is the directory that will store the userNames and RAML files in HDFS (e.g. /webhdfs/v1/tmp/users/jake/myRaml.raml)
+var filePath = '/webhdfs/v1/tmp/users/';
 // Change this if any administrative privileges are needed (e.g. '&user.name=root')
 var user_access_name = '';
 /*******************************/
