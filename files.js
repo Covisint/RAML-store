@@ -8,7 +8,7 @@ var user_access_name = '';
 /*******************************/
 
 // Filename for logs
-var log_file = "RAML_Store.log";
+var log_file = "/var/log/apidoc/RAML_Store.log";
 
 // Logger module
 var winston = require('winston');
