@@ -50,13 +50,6 @@ app.get('/', routes.index);
 
 app.get('/HDFS/:id', files.consoleHDFS);
 
-app.get('/logout', function (req, res) {
-  delete req.session.user_id;
-  res.statusCode = 401;
-  res.send({message:"You have logged out!"});
-  //res.redirect('/index.html');
-});
-
 
 app.listen(app.get("port"));
 console.log('Listening on port 3000...');
