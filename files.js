@@ -41,7 +41,7 @@ exports.findAll = function (req, res) {
     	// Array to store all the file path names
     	var paths = [];
 
-	/** Getting username from Nginx Authorization **/
+	/** Getting username from Apache Authorization **/
 	var headers = req.header("authorization");
 	// Remove BASIC tag
 	var sub = headers.substring(6, headers.length)
@@ -316,18 +316,6 @@ exports.deleteFile = function (req, res) {
 /**   RAML FILE FOR CONSOLE.HTML **/
 /**********************************/
 exports.consoleHDFS = function (req, res) {
-	/*logger.log("info", "headers: " + JSON.stringify(req.headers));
-	var headers = req.header("authorization");
-	console.log("auth header: " + headers);
-	// Remove BASIC tag
-	var sub = headers.substring(6, headers.length)
-	// Decode header from base 64 to a string
-	var buffer = new Buffer(sub, 'base64');
-	var decoded = buffer.toString();
-    // Split and grab the Username
-	var index = decoded.indexOf(':');
-    userName = decoded.substring(0, index);*/
-
 	logger.log("info", "IN FUNCTION consoleHDFS");
     var file = "/" + req.params.id;
     logger.log("info", "File: " + file);
