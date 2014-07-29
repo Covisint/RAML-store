@@ -236,7 +236,7 @@ exports.updateFile = function (req, res) {
     	}//end if
 
 	else {
-		full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true';
+		full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true' + replication + blocksize;
 		logger.log("info", "Full uri: " + full_uri);
 
 		request.put(
