@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "3.x",
     "request": "2.x",
-    "winston": "0.x"
+    "winston": "0.x",
+    "forever": "0.11.x"
   }
 }
