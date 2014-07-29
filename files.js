@@ -2,7 +2,7 @@
 var host = 'http://localhost';
 var port = ':50070';
 // This is the directory that will store the userNames and RAML files in HDFS (e.g. /webhdfs/v1/tmp/users/jake/myRaml.raml)
-var filePath = '/webhdfs/v1/tmp/users/';
+var filePath = '/webhdfs/v1/raml/';
 // Change this if any administrative privileges are needed (e.g. '&user.name=root')
 var user_access_name = '';
 /*******************************/
@@ -25,10 +25,10 @@ var logger = new (winston.Logger)({
 var request = require("request");
 
 // Username set automatically by extracting header from Nginx
-var userName;
+var userName = '';
 
 // Options for Hadoop block and replication size
-var blocksize ='&blocksize=5120';
+var blocksize ='&blocksize=1048576'; // 1MB
 var replication ='&replication=3'
 
 
@@ -42,7 +42,7 @@ exports.findAll = function (req, res) {
     	var paths = [];
 
 	/** Getting username from Apache Authorization **/
-	var headers = req.header("authorization");
+	/*var headers = req.header("authorization");
 	// Remove BASIC tag
 	var sub = headers.substring(6, headers.length)
 	// Decode header from base 64 to a string
@@ -50,7 +50,7 @@ exports.findAll = function (req, res) {
 	var decoded = buffer.toString();
     	// Split and grab the Username
 	var index = decoded.indexOf(':');
-    	userName = decoded.substring(0, index);
+    	userName = decoded.substring(0, index);*/
 
 	// Object to send back to index.html
 	var fileList = new Object();
