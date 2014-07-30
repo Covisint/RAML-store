@@ -4,7 +4,7 @@
  
 USER="apidoc"
  
-DAEMON="/home/apidoc/node-v0.10.29/bin/node"
+DAEMON="/home/apidoc/node-v0.10.29/node"
 ROOT_DIR="/home/apidoc/api-designer-master"
  
 SERVER="$ROOT_DIR/server.js"
@@ -15,7 +15,7 @@ do_start()
 {
         if [ ! -f "$LOCK_FILE" ] ; then
                 echo -n $"Starting $SERVER: "
-                runuser -l "$USER" -c "$DAEMON $SERVER >> $LOG_FILE &" && echo_success || echo_failure
+                runuser -l "$USER" -c "$DAEMON $SERVER" && echo_success || echo_failure
                 RETVAL=$?
                 echo
                 [ $RETVAL -eq 0 ] && touch $LOCK_FILE
