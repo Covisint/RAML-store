@@ -7,6 +7,10 @@ var filePath = '/webhdfs/v1/raml';
 var user_access_name = '';
 /*******************************/
 
+// Options for Hadoop block and replication size
+var blocksize ='&blocksize=1048576'; // 1MB
+var replication ='&replication=3'
+
 // Filename for logs
 var log_file = "/var/log/apidoc/RAML_Store.log";
 
@@ -24,12 +28,8 @@ var logger = new (winston.Logger)({
 //adding request module to simplify http requests
 var request = require("request");
 
-// Username set automatically by extracting header from Nginx
+// Username set automatically by extracting header from Apache
 var userName = '';
-
-// Options for Hadoop block and replication size
-var blocksize ='&blocksize=1048576'; // 1MB
-var replication ='&replication=3'
 
 
 /**************************/
