@@ -40,9 +40,9 @@ To change the name of the log file edit this line in 'files.js':
 var log_file = "RAML_Store.log";
 ```
 
-The username is extracted from Nginx in the findAll function in files.js: 
+The username is extracted from a webserver in the findAll function in files.js: 
 ```
-/** Getting username from Nginx Authorization **/
+/** Getting username from a webserver Authorization **/
 var headers = req.header("authorization");
 // Remove BASIC tag
 var sub = headers.substring(6, headers.length)
