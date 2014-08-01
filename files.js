@@ -38,8 +38,8 @@ var userName = '';
 exports.findAll = function (req, res) {
 	var functionName = "findAll";
 	
-    // Array to store all the file path names
-    var paths = [];
+    	// Array to store all the file path names
+    	var paths = [];
 
 	/** Getting username from Apache Authorization **/
 	var headers = req.header("authorization");
@@ -67,64 +67,64 @@ exports.findAll = function (req, res) {
             		}//end headers
         }//end request options
         //end request
-    , function (error, response, body) {
-        logger.log("info", "RESPONSE STATUS: " + response.statusCode, {function: functionName, username:userName});
-        logger.log("info", "RESPONSE HEADERS: " + JSON.stringify(response.headers), {function: functionName, username:userName});
+    	, function (error, response, body) {
+        	logger.log("info", "RESPONSE STATUS: " + response.statusCode, {function: functionName, username:userName});
+        	logger.log("info", "RESPONSE HEADERS: " + JSON.stringify(response.headers), {function: functionName, username:userName});
 
-        /*** PARSE BODY FOR ALL PATH NAMES ***/
-        var split1 = body.split("pathSuffix\":\"");
+        	/*** PARSE BODY FOR ALL PATH NAMES ***/
+        	var split1 = body.split("pathSuffix\":\"");
 
-        //start at 1 to avoid grabbing "FileStatuses"
-        for (var i = 1; i < split1.length; i++) {
-            var split2 = split1[i].split("\",");
-            logger.log("info", "File[" + i + "]: " + split2[0], {function: functionName, username:userName});
-            paths.push(split2[0]);
-        }//end for
+	        //start at 1 to avoid grabbing "FileStatuses"
+	        for (var i = 1; i < split1.length; i++) {
+	            var split2 = split1[i].split("\",");
+	            logger.log("info", "File[" + i + "]: " + split2[0], {function: functionName, username:userName});
+	            paths.push(split2[0]);
+	        }//end for
 
-        //add each of the path names to fileList object
-        for (var i = 0; i < paths.length; i++) {
-            fileList[paths[i]] = {};
-            fileList[paths[i]]["path"] = "/" + paths[i];
-        }//end for
-        /*** END PARSING FOR PATH NAMES ***/
+	        //add each of the path names to fileList object
+	        for (var i = 0; i < paths.length; i++) {
+	            fileList[paths[i]] = {};
+	            fileList[paths[i]]["path"] = "/" + paths[i];
+	        }//end for
+	        /*** END PARSING FOR PATH NAMES ***/
 
-        if (response.statusCode === 200) {
-            logger.log("info", "All files were retrieved successfully", {function: functionName, username:userName});
-            //Send the fileList object
-            res.send(JSON.stringify({ status: "ok", response: fileList }));
-        }//end if
-	// The directory has not been created yet - 404
-        else if (response.statusCode === 404){
-			logger.log("warn", "Creating new directory!", {function: functionName, username:userName});
-			full_uri = host + port + filePath + '?op=MKDIRS' + user_access_name;
-			logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
-			
-			request.put({
-					uri: full_uri, 
-					followAllRedirects: true, 
-					headers: {
-						'Connection': 'close'
-					}//end headers
-				}//end request options
-				, function (error, response, body) {
-					logger.log("info", "RESPONSE STATUS for creating new directory: " + response.statusCode, {function: functionName, username:userName});
-					logger.log("info", "RESPONSE HEADERS for creating new directory: " + JSON.stringify(response.headers), {function: functionName, username:userName});
-
-					if (response.statusCode === 200) {
-						logger.log("info", "Successfully created new directory!", {function: functionName, username:userName});
-						//Send the fileList object
-						res.send(JSON.stringify({ status: "ok", response: fileList }));
-					}//end if
-					else{
-						logger.log("error", "Error creating directory: " + response.statusCode, {function: functionName, username:userName});
-					}//end else
-				}//end callback function
-			);//end request
-        }//end else if
-	else{
-		logger.log("error", "Error retrieving directory: " + response.statusCode, {function: functionName, username:userName});
-        }//end else
-    })//end callback function
+	        if (response.statusCode === 200) {
+	            logger.log("info", "All files were retrieved successfully", {function: functionName, username:userName});
+	            //Send the fileList object
+	            res.send(JSON.stringify({ status: "ok", response: fileList }));
+	        }//end if
+		// The directory has not been created yet - 404
+	        else if (response.statusCode === 404){
+				logger.log("warn", "Creating new directory!", {function: functionName, username:userName});
+				full_uri = host + port + filePath + '?op=MKDIRS' + user_access_name;
+				logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
+				
+				request.put({
+						uri: full_uri, 
+						followAllRedirects: true, 
+						headers: {
+							'Connection': 'close'
+						}//end headers
+					}//end request options
+					, function (error, response, body) {
+						logger.log("info", "RESPONSE STATUS for creating new directory: " + response.statusCode, {function: functionName, username:userName});
+						logger.log("info", "RESPONSE HEADERS for creating new directory: " + JSON.stringify(response.headers), {function: functionName, username:userName});
+	
+						if (response.statusCode === 200) {
+							logger.log("info", "Successfully created new directory!", {function: functionName, username:userName});
+							//Send the fileList object
+							res.send(JSON.stringify({ status: "ok", response: fileList }));
+						}//end if
+						else{
+							logger.log("error", "Error creating directory: " + response.statusCode, {function: functionName, username:userName});
+						}//end else
+					}//end callback function
+				);//end request
+	        }//end else if
+		else{
+			logger.log("error", "Error retrieving directory: " + response.statusCode, {function: functionName, username:userName});
+	        }//end else
+    	})//end callback function
 }//end getAllFiles function
 
 
