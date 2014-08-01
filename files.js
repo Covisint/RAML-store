@@ -55,7 +55,7 @@ exports.findAll = function (req, res) {
 	// Object to send back to index.html
 	var fileList = new Object();
 
-	full_uri = host + port + filePath + userName + '?op=LISTSTATUS';
+	full_uri = host + port + filePath + '?op=LISTSTATUS';
 	logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 
 	request(
@@ -96,7 +96,7 @@ exports.findAll = function (req, res) {
 	// The directory has not been created yet - 404
         else if (response.statusCode === 404){
 			logger.log("warn", "Creating new directory!", {function: functionName, username:userName});
-			full_uri = host + port + filePath + userName + '?op=MKDIRS' + user_access_name;
+			full_uri = host + port + filePath + '?op=MKDIRS' + user_access_name;
 			logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 			
 			request.put({
@@ -137,7 +137,7 @@ exports.findById = function (req, res) {
    	var file = "/" + req.params.id;
     	logger.log("info", "File: " + file, {function: functionName, username:userName});
 
-	full_uri = host + port + filePath + userName + file + '?op=OPEN' + user_access_name;
+	full_uri = host + port + filePath + file + '?op=OPEN' + user_access_name;
 	logger.log("info", "Full URI: " + full_uri, {function: functionName, username:userName});
 
     	if (file === '/undefined') {
@@ -184,7 +184,7 @@ exports.addFile = function (req, res) {
 
     bodyContent = req.body.content;
 
-	full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true' + blocksize + replication;
+	full_uri = host + port + filePath + file + '?op=CREATE' + user_access_name + '&overwrite=true' + blocksize + replication;
 	logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 
 	if (file === '/undefined') {
@@ -235,7 +235,7 @@ exports.updateFile = function (req, res) {
     	}//end if
 
 	else {
-		full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true' + replication + blocksize;
+		full_uri = host + port + filePath + file + '?op=CREATE' + user_access_name + '&overwrite=true' + replication + blocksize;
 		logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 
 		request.put(
@@ -276,7 +276,7 @@ exports.deleteFile = function (req, res) {
     var file = "/" + req.params.id;
     logger.log("info", "Deleting file: " + file, {function: functionName, username:userName});
 
-	full_uri = host + port + filePath + userName + file + '?op=DELETE' + user_access_name;
+	full_uri = host + port + filePath + file + '?op=DELETE' + user_access_name;
 	logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 
     if (file == 'undefined') {
@@ -319,7 +319,7 @@ exports.consoleHDFS = function (req, res) {
     var file = "/" + req.params.id;
     logger.log("info", "File: " + file, {function: functionName, username:userName});
 
-	full_uri = host + port + filePath + userName + file + '?op=OPEN' + user_access_name;
+	full_uri = host + port + filePath + file + '?op=OPEN' + user_access_name;
 	logger.log("info", "Full URI: " + full_uri, {function: functionName, username:userName});
 
     if (file === '/undefined') {
