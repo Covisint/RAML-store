@@ -36,13 +36,13 @@ var userName = '';
 /**    FIND ALL FILES    **/
 /**************************/
 exports.findAll = function (req, res) {
-	logger.log("info", "IN FUNCTION findAll");
+	var functionName = "findAll";
 	
-    	// Array to store all the file path names
-    	var paths = [];
+    // Array to store all the file path names
+    var paths = [];
 
 	/** Getting username from Apache Authorization **/
-	/*var headers = req.header("authorization");
+	var headers = req.header("authorization");
 	// Remove BASIC tag
 	var sub = headers.substring(6, headers.length)
 	// Decode header from base 64 to a string
@@ -50,13 +50,13 @@ exports.findAll = function (req, res) {
 	var decoded = buffer.toString();
     	// Split and grab the Username
 	var index = decoded.indexOf(':');
-    	userName = decoded.substring(0, index);*/
+    	userName = decoded.substring(0, index);
 
 	// Object to send back to index.html
 	var fileList = new Object();
 
 	full_uri = host + port + filePath + userName + '?op=LISTSTATUS';
-	logger.log("info", "Full uri: " + full_uri);
+	logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 
 	request(
         {
@@ -68,9 +68,8 @@ exports.findAll = function (req, res) {
         }//end request options
         //end request
     , function (error, response, body) {
-    	logger.log("info", "Response for findAll request");
-        logger.log("info", "STATUS: " + response.statusCode);
-        logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
+        logger.log("info", "RESPONSE STATUS: " + response.statusCode, {function: functionName, username:userName});
+        logger.log("info", "RESPONSE HEADERS: " + JSON.stringify(response.headers), {function: functionName, username:userName});
 
         /*** PARSE BODY FOR ALL PATH NAMES ***/
         var split1 = body.split("pathSuffix\":\"");
@@ -78,7 +77,7 @@ exports.findAll = function (req, res) {
         //start at 1 to avoid grabbing "FileStatuses"
         for (var i = 1; i < split1.length; i++) {
             var split2 = split1[i].split("\",");
-            logger.log("info", "File[" + i + "]: " + split2[0]);
+            logger.log("info", "File[" + i + "]: " + split2[0], {function: functionName, username:userName});
             paths.push(split2[0]);
         }//end for
 
@@ -90,15 +89,15 @@ exports.findAll = function (req, res) {
         /*** END PARSING FOR PATH NAMES ***/
 
         if (response.statusCode === 200) {
-            logger.log("info", "All files were retrieved successfully");
+            logger.log("info", "All files were retrieved successfully", {function: functionName, username:userName});
             //Send the fileList object
             res.send(JSON.stringify({ status: "ok", response: fileList }));
         }//end if
 	// The directory has not been created yet - 404
         else if (response.statusCode === 404){
-			logger.log("warn", "Creating new directory!");
+			logger.log("warn", "Creating new directory!", {function: functionName, username:userName});
 			full_uri = host + port + filePath + userName + '?op=MKDIRS' + user_access_name;
-			logger.log("info", "Full uri: " + full_uri);
+			logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 			
 			request.put({
 					uri: full_uri, 
@@ -108,23 +107,22 @@ exports.findAll = function (req, res) {
 					}//end headers
 				}//end request options
 				, function (error, response, body) {
-					logger.log("info", "Response for creating new directory");
-					logger.log("info", "STATUS: " + response.statusCode);
-					logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
+					logger.log("info", "RESPONSE STATUS for creating new directory: " + response.statusCode, {function: functionName, username:userName});
+					logger.log("info", "RESPONSE HEADERS for creating new directory: " + JSON.stringify(response.headers), {function: functionName, username:userName});
 
 					if (response.statusCode === 200) {
-						logger.log("info", "Successfully created new directory!");
+						logger.log("info", "Successfully created new directory!", {function: functionName, username:userName});
 						//Send the fileList object
 						res.send(JSON.stringify({ status: "ok", response: fileList }));
 					}//end if
 					else{
-						logger.log("error", "Error creating directory: " + response.statusCode);
+						logger.log("error", "Error creating directory: " + response.statusCode, {function: functionName, username:userName});
 					}//end else
 				}//end callback function
 			);//end request
         }//end else if
 	else{
-		logger.log("error", "Error retrieving directory: " + response.statusCode);
+		logger.log("error", "Error retrieving directory: " + response.statusCode, {function: functionName, username:userName});
         }//end else
     })//end callback function
 }//end getAllFiles function
@@ -134,15 +132,16 @@ exports.findAll = function (req, res) {
 /**   FINDING SINGLE RAML FILE  **/
 /********************************/
 exports.findById = function (req, res) {
-	logger.log("info", "IN FUNCTION findById");
+	var functionName = 'findById';
+
    	var file = "/" + req.params.id;
-    	logger.log("info", "File: " + file);
+    	logger.log("info", "File: " + file, {function: functionName, username:userName});
 
 	full_uri = host + port + filePath + userName + file + '?op=OPEN' + user_access_name;
-	logger.log("info", "Full URI: " + full_uri);
+	logger.log("info", "Full URI: " + full_uri, {function: functionName, username:userName});
 
     	if (file === '/undefined') {
-        	logger.log("error", "File is undefined");
+        	logger.log("error", "File is undefined", {function: functionName, username:userName});
     	}//end if
 
     	else {
@@ -156,17 +155,16 @@ exports.findById = function (req, res) {
             		}//end request options
             		//callback function for request
             		, function (error, response, body) {
-            			logger.log("info", "Response for findById request");
-                		logger.log("info", "STATUS: " + response.statusCode);
-                		logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
+                		logger.log("info", "RESPONSE STATUS: " + response.statusCode, {function: functionName, username:userName});
+                		logger.log("info", "RESPONSE HEADERS: " + JSON.stringify(response.headers), {function: functionName, username:userName});
                 		if (response.statusCode == 200) {
-                			logger.log("info", "Document was opened successfully");
+                			logger.log("info", "Document was opened successfully", {function: functionName, username:userName});
                     			//send necessary information to index.html 
                     			item = { "content": body, "path": file};
                     			res.send(item);
                 		}//end if
                 		else {
-                			logger.log("error", "error in findById: " + response.statusCode);
+                			logger.log("error", "error in request: " + response.statusCode, {function: functionName, username:userName});
                 		}//end else
             		}//end function
             	)//end request
@@ -179,17 +177,18 @@ exports.findById = function (req, res) {
 /**************************/
 //New addFile method using request module
 exports.addFile = function (req, res) {
-	logger.log("info", "IN FUNCTION addFile");
-    	var file = req.body.path;
-    	logger.log("info", "File path: " + file);
+	var functionName = 'addFile';
 
-    	bodyContent = req.body.content;
+    var file = req.body.path;
+    logger.log("info", "File path: " + file, {function: functionName, username:userName});
+
+    bodyContent = req.body.content;
 
 	full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true' + blocksize + replication;
-	logger.log("info", "Full uri: " + full_uri);
+	logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 
 	if (file === '/undefined') {
-		logger.log("error", "File is undefined!");
+		logger.log("error", "File is undefined!", {function: functionName, username:userName});
     	}//end if
     
     	else {
@@ -203,17 +202,16 @@ exports.addFile = function (req, res) {
 	                    }//end put options
         		//callback function for request
 			, function (error, response, body) {
-				logger.log("info", "Response for addFile");
-				logger.log("info", "STATUS: " + response.statusCode);
-				logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
+				logger.log("info", "RESPONSE STATUS: " + response.statusCode, {function: functionName, username:userName});
+				logger.log("info", "RESPONSE HEADERS: " + JSON.stringify(response.headers), {function: functionName, username:userName});
 
 				if (response.statusCode == 201) {
-					logger.log("info", "Document was created successfully!");
+					logger.log("info", "Document was created successfully!", {function: functionName, username:userName});
 					item = { "content": bodyContent, "path": file};
 					res.send(item);
 				}//end if
 				else {
-					logger.log("error", "Error adding new file: " + response.statusCode);
+					logger.log("error", "Error adding new file: " + response.statusCode, {function: functionName, username:userName});
 				}//end else
 			}//end callback function
 		);//end request
@@ -225,11 +223,12 @@ exports.addFile = function (req, res) {
 /**  UPDATING RAML FILE  **/
 /**************************/
 exports.updateFile = function (req, res) {
-	logger.log("info", "IN FUNCTION updateFile");
-    	//get file path name from request body
-    	var file = "/" + req.params.id;
-    	logger.log("info", "File: " + file);
-    	var bodyContent = req.body.content;
+	var functionName = 'updateFile';
+
+	//get file path name from request body
+	var file = "/" + req.params.id;
+	logger.log("info", "File: " + file, {function: functionName, username:userName});
+	var bodyContent = req.body.content;
 
 	if (file === '/undefined') {
 		logger.log("error", "File is undefined!");
@@ -237,7 +236,7 @@ exports.updateFile = function (req, res) {
 
 	else {
 		full_uri = host + port + filePath + userName + file + '?op=CREATE' + user_access_name + '&overwrite=true' + replication + blocksize;
-		logger.log("info", "Full uri: " + full_uri);
+		logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 
 		request.put(
 			{
@@ -250,17 +249,16 @@ exports.updateFile = function (req, res) {
 			}//end request.post parameters
 		  	//callback function for the Request  
 			, function (error, response, body) {
-				logger.log("info", "Response for updateFile");
-				logger.log("info", "STATUS: " + response.statusCode);
-				logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
+				logger.log("info", "RESPONSE STATUS: " + response.statusCode, {function: functionName, username:userName});
+				logger.log("info", "RESPONSE HEADERS: " + JSON.stringify(response.headers), {function: functionName, username:userName});
 
 				if (response.statusCode == 201) {
-					logger.log("info", "Document was saved successfully!!!!");
+					logger.log("info", "Document was updated successfully!", {function: functionName, username:userName});
 					//need to use main function req and res for this
 					res.send('{"status":"success","id":"' + file + '","message":"The file was successfully updated."}');   
 				}//end if
 				else {
-					logger.log("error", "Error with updateFile: " + response.statusCode);
+					logger.log("error", "Error with updateFile: " + response.statusCode, {function: functionName, username:userName});
 				}//end else
 			}//end callback function
 		)//end request.put
@@ -273,15 +271,16 @@ exports.updateFile = function (req, res) {
 /**************************/
 //new Delete function using Request module
 exports.deleteFile = function (req, res) {
-	logger.log("info", "IN FUNCTION deleteFile");
+	var functionName= 'deleteFile';
+
     var file = "/" + req.params.id;
-    logger.log("info", "Deleting file: " + file + " from user: " + userName);
+    logger.log("info", "Deleting file: " + file, {function: functionName, username:userName});
 
 	full_uri = host + port + filePath + userName + file + '?op=DELETE' + user_access_name;
-	logger.log("info", "Full uri: " + full_uri);
+	logger.log("info", "Full uri: " + full_uri, {function: functionName, username:userName});
 
     if (file == 'undefined') {
-        logger.log("error", "The file is undefined and cannot be deleted");
+        logger.log("error", "The file is undefined and cannot be deleted", {function: functionName, username:userName});
     }//end if
     
     else {
@@ -295,18 +294,17 @@ exports.deleteFile = function (req, res) {
             }//end request options
             //callback function for the Request  
         , function (error, response, body) {
-        	logger.log("info", "Response for deleteFile");
-		logger.log("info", "STATUS: " + response.statusCode);
-		logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
+			logger.log("info", "RESPONSE STATUS: " + response.statusCode, {function: functionName, username:userName});
+			logger.log("info", "RESPONSE HEADERS: " + JSON.stringify(response.headers), {function: functionName, username:userName});
 
-            	if (response.statusCode == 200) {
-            		logger.log("info", "Document was deleted successfully");
-               		//send so that index.html knows the delete was successful
-                	res.send(req.body);
-            	}//end if
-            	else {
-                	logger.log("error", "Error with deleteFile: " + response.statusCode);
-            	}//end else
+            if (response.statusCode == 200) {
+            	logger.log("info", "Document was deleted successfully!", {function: functionName, username:userName});
+               	//send so that index.html knows the delete was successful
+                res.send(req.body);
+            }//end if
+            else {
+                logger.log("error", "Error with deleteFile: " + response.statusCode, {function: functionName, username:userName});
+            }//end else
         }//end function
       )//end request.delete function
     }//end else
@@ -316,15 +314,16 @@ exports.deleteFile = function (req, res) {
 /**   RAML FILE FOR CONSOLE.HTML **/
 /**********************************/
 exports.consoleHDFS = function (req, res) {
-	logger.log("info", "IN FUNCTION consoleHDFS");
+	var functionName = 'consoleHDFS';
+
     var file = "/" + req.params.id;
-    logger.log("info", "File: " + file);
+    logger.log("info", "File: " + file, {function: functionName, username:userName});
 
 	full_uri = host + port + filePath + userName + file + '?op=OPEN' + user_access_name;
-	logger.log("info", "Full URI: " + full_uri);
+	logger.log("info", "Full URI: " + full_uri, {function: functionName, username:userName});
 
     if (file === '/undefined') {
-        logger.log("error", "File is undefined");
+        logger.log("error", "File is undefined", {function: functionName, username:userName});
     }//end if
 
     else {
@@ -338,16 +337,15 @@ exports.consoleHDFS = function (req, res) {
                 }//end headers
             }//end request options
             , function (error, response, body) {
-				logger.log("info", "Response for findById request");
-                logger.log("info", "STATUS: " + response.statusCode);
-                logger.log("info", "HEADERS: " + JSON.stringify(response.headers));
+                logger.log("info", "RESPONSE STATUS: " + response.statusCode, {function: functionName, username:userName});
+                logger.log("info", "RESPONSE HEADERS: " + JSON.stringify(response.headers), {function: functionName, username:userName});
                 if (response.statusCode == 200) {
-                    logger.log("info", "Document was opened successfully");
+                    logger.log("info", "Document was opened successfully!", {function: functionName, username:userName});
                     //send decoded body to console.html 
 					res.send(decodeURI(body));
                 }//end if
                 else {
-                    logger.log("error", "error in findById: " + response.statusCode);
+                    logger.log("error", "error in request: " + response.statusCode, {function: functionName, username:userName});
                 }//end else
             }//end function
             )//end request
